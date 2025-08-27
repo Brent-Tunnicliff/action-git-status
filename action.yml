@@ -1,10 +1,30 @@
 # Copyright © 2025 Brent Tunnicliff <brent@tunnicliff.dev>
 
-name: 'Template action'
-description: 'Replace me'
+name: 'Git Status'
+description: 'Checks the git status for any local changes.'
+inputs:
+  fail_if_local_changes_found:
+    description: 'If set as true the job will fail if any local changes are found.'
+    required: false
+    default: true
+    type: boolean
 runs:
   using: "composite"
   steps:
-    - name: Hello
+    - name: Check git status
       shell: bash
-      run: echo "Hello World!"
+      run: |
+        LOCAL_CHANGES=$(git status --porcelain)
+
+        # If no local changes, then exit successfully early.
+        if [[ $LOCAL_CHANGES == "" ]]; then
+          echo "No local changes found"
+          exit 0
+        fi
+
+        echo "Local changes found:"
+        echo $LOCAL_CHANGES
+
+        if [[ ${{ inputs.fail_if_local_changes_found }} ]]; then
+          exit 1
+        fi
