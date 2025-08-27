@@ -26,6 +26,7 @@ runs:
         git add .
         git diff HEAD
 
-        if [[ ${{ inputs.fail_if_local_changes_found }} ]]; then
+        SHOULD_FAIL=${{ inputs.fail_if_local_changes_found }}
+        if $SHOULD_FAIL; then
           exit 1
         fi
