@@ -14,16 +14,17 @@ runs:
     - name: Check git status
       shell: bash
       run: |
-        LOCAL_CHANGES=$(git status --porcelain)
-
         # If no local changes, then exit successfully early.
-        if [[ $LOCAL_CHANGES == "" ]]; then
+        if [[ $(git status --porcelain) == "" ]]; then
           echo "No local changes found"
           exit 0
         fi
 
-        echo "Local changes found:"
-        echo $LOCAL_CHANGES
+        echo "Local changes found"
+
+        # Stage all changes to make sure new files will show up in the diff.
+        git add .
+        git diff HEAD
 
         if [[ ${{ inputs.fail_if_local_changes_found }} ]]; then
           exit 1
